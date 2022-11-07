@@ -367,15 +367,20 @@ diff all_original_transcript_ids.txt transcript_ids_to_keep.txt | grep '<' | sed
 grep -w -f 'gene_ids_to_keep.txt' braker_combined_renamed.gff | grep -w -v -f 'transcript_ids_to_remove.txt' >> test_removeContained_19.gff
 gt gff3 -sort -tidy -fixregionboundaries -force -o test_removeContained_20.gff test_removeContained_19.gff
 
+# Fix CDS overlapping gaps and misannotated mitochondrion
+sh fixOverlaps_mealworm.sh
+gt gff3 -sort -tidy -fixregionboundaries -force -o test_removeContained_22.gff test_removeContained_21.gff
+sed -i "s/mitochondrion/location\=mitochondrion/" mealworm_masked.fasta
+
 # Run table2asn
-table2asn -M n -J -c w -euk -t Tmol-template.sbt -gaps-min 10 -gaps-unknown 100 -l align-genus -j "[organism=Tenebrio molitor]" -i mealworm_masked.fasta -f test_removeContained_20.gff -o Tenebrio_molitor.sqn -Z -locus-tag-prefix Tmol -V vb -verbose
+table2asn -M n -J -c w -euk -t Tmol-template.sbt -gaps-min 10 -gaps-unknown 100 -l align-genus -j "[organism=Tenebrio molitor]" -i mealworm_masked.fasta -f test_removeContained_22.gff -o Tenebrio_molitor.sqn -Z -locus-tag-prefix MTP99 -V vb -verbose
 
 # Get some stats
-gt stat -addintrons -force -genelengthdistri -o mealworm_gene_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -exonlengthdistri -o mealworm_exon_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -exonnumberdistri -o mealworm_exon_number_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -intronlengthdistri -o mealworm_intron_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -cdslengthdistri -o mealworm_cds_length_distribution.txt test_removeContained_20.gff
+gt stat -addintrons -force -genelengthdistri -o mealworm_gene_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -exonlengthdistri -o mealworm_exon_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -exonnumberdistri -o mealworm_exon_number_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -intronlengthdistri -o mealworm_intron_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -cdslengthdistri -o mealworm_cds_length_distribution.txt test_removeContained_22.gff
 
 # Get proteins
 cp ../../extractFAA.pl .

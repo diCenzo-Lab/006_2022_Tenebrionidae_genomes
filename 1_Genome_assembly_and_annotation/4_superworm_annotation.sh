@@ -249,15 +249,20 @@ diff all_original_transcript_ids.txt transcript_ids_to_keep.txt | grep '<' | sed
 grep -w -f 'gene_ids_to_keep.txt' braker_combined_renamed.gff | grep -w -v -f 'transcript_ids_to_remove.txt' >> test_removeContained_19.gff
 gt gff3 -sort -tidy -fixregionboundaries -force -o test_removeContained_20.gff test_removeContained_19.gff
 
+# Fix CDS overlapping gaps and misannotated mitochondrion
+sh fixOverlaps_superworm.sh
+gt gff3 -sort -tidy -fixregionboundaries -force -o test_removeContained_22.gff test_removeContained_21.gff
+sed -i "s/mitochondrion/location\=mitochondrion/" superworm_masked.fasta
+
 # Run table2asn
-table2asn -M n -J -c w -euk -t Zmor-template.sbt -gaps-min 10 -gaps-unknown 100 -l align-genus -j "[organism=Zophobas morio]" -i superworm_masked.fasta -f test_removeContained_20.gff -o Zophobas_morio.sqn -Z -locus-tag-prefix Zmor -V vb -verbose
+table2asn -M n -J -c w -euk -t Zmor-template.sbt -gaps-min 10 -gaps-unknown 100 -l align-genus -j "[organism=Zophobas morio]" -i superworm_masked.fasta -f test_removeContained_22.gff -o Zophobas_morio.sqn -Z -locus-tag-prefix Zmor -V vb -verbose
 
 # Get some stats
-gt stat -addintrons -force -genelengthdistri -o superworm_gene_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -exonlengthdistri -o superworm_exon_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -exonnumberdistri -o superworm_exon_number_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -intronlengthdistri -o superworm_intron_length_distribution.txt test_removeContained_20.gff
-gt stat -addintrons -force -cdslengthdistri -o superworm_cds_length_distribution.txt test_removeContained_20.gff
+gt stat -addintrons -force -genelengthdistri -o superworm_gene_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -exonlengthdistri -o superworm_exon_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -exonnumberdistri -o superworm_exon_number_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -intronlengthdistri -o superworm_intron_length_distribution.txt test_removeContained_22.gff
+gt stat -addintrons -force -cdslengthdistri -o superworm_cds_length_distribution.txt test_removeContained_22.gff
 
 # Get proteins
 cp ../../extractFAA.pl .
